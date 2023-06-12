@@ -1,0 +1,69 @@
+---
+import { appContainer } from "@backend/backend";
+import Layout from "../layouts/Layout.astro";
+
+const session = await appContainer
+    .getUserSession(Astro.cookies)
+    .GetUserFromSession();
+
+if (session.isEmpty()) {
+    return Astro.redirect("/auth");
+}
+---
+
+<Layout title="New Blogpost">
+    <div class="h-screen w-screen flex items-center justify-center">
+        <form
+            action="/api/post"
+            method="post"
+            class="w-1/3 flex flex-col space-y-4"
+        >
+            <div class="form-group">
+                <label
+                    for="title"
+                    class="block text-sm font-medium leading-6 text-gray-900"
+                >
+                    Title
+                </label>
+
+                <div class="mt-2">
+                    <input
+                        id="title"
+                        name="title"
+                        type="text"
+                        required
+                        class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label
+                    for="content"
+                    class="block text-sm font-medium leading-6 text-gray-900"
+                >
+                    Content
+                </label>
+
+                <div class="mt-2">
+                    <textarea
+                        id="content"
+                        name="content"
+                        rows="3"
+                        class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    ></textarea>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div>
+                <button
+                    type="submit"
+                    class="flex w-full justify-center rounded-md bg-brand px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-brand-brighter focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                >
+                    Create
+                </button>
+            </div>
+        </form>
+    </div>
+</Layout>

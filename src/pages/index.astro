@@ -1,0 +1,49 @@
+---
+import { appContainer } from "@backend/backend";
+import type { SelectPostEntity } from "@backend/package/database/entity/post.entity";
+import { format } from "date-fns";
+import Layout from "src/layouts/Layout.astro";
+const currentUser = await appContainer
+	.getUserSession(Astro.cookies)
+	.GetUserFromSession();
+
+// Check if the requester is signed in
+if (currentUser.isEmpty()) {
+	return Astro.redirect("/auth");
+}
+
+// Fetch all posts of the current user
+const posts = await appContainer
+	.getPostRepository()
+	.findPostsOfUser(currentUser.get().id);
+
+console.log(JSON.stringify(posts));
+
+// This does not ensure that the generated link meets the Schema defined in [...catchPost] route
+// maybe there's another way of having both in sync
+function makeLink(post: SelectPostEntity): string {
+	return `/post/${post.id}-${post.title.toLowerCase().replaceAll(" ", "-")}`;
+}
+---
+
+<Layout title="Post">
+	<div class="w-1/3 mx-auto mt-12">
+		<h1 class="text-2xl font-semibold text-black mb-2">Posts</h1>
+		<ul class="flex flex-col space-y-2">
+			{
+				posts.map((post) => (
+					<li>
+						<a href={makeLink(post)}>{post.title}</a>{" "}
+						<span class="text-sm text-zinc-400">
+							- ({format(new Date(post.createdAt), "dd.MM.yyyy")})
+						</span>
+					</li>
+				))
+			}
+
+			<li class="font-medium text-brand mt-2">
+				<a href="/new-post" data-test="new-post">New Post</a>
+			</li>
+		</ul>
+	</div>
+</Layout>
