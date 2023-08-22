@@ -1,12 +1,11 @@
 describe("Post functionality", () => {
+  beforeEach(() => {
+    cy.login();
+    cy.visit("/");
+  });
+
   context("create a post", () => {
-    it("should be able to create a post", (done) => {
-      // Restore session
-      cy.login();
-
-      // Visit the main page
-      cy.visit("http://localhost:3000");
-
+    it("should be able to create a post", () => {
       // Visit the new-post page by clicking the a-Element
       cy.get("a[data-test='new-post']").click();
       cy.location("pathname").should("eq", "/new-post");
@@ -27,24 +26,17 @@ describe("Post functionality", () => {
       cy.get("a[data-test='back-to-posts']").should("exist");
       cy.get("a[data-test='back-to-posts']").click();
       cy.location("pathname").should("eq", "/");
-
-      done();
     });
   });
 
   context("visit a post", () => {
-    it("should allow to visit a post", (done) => {
-      // Restore session
-      cy.login();
-
-      // Visit the main page
-      cy.visit("http://localhost:3000");
-
-      const href = cy.$$("ul > li a").attr("href");
-      cy.get("ul > li a").click();
-      cy.location("pathname").should("eq", href);
-
-      done();
+    it("should allow to visit a post", () => {
+      const anchor = cy.get("[data-cy=posts] > li:nth-child(2) > a");
+      anchor.then((el) => {
+        const href = el.attr("href");
+        anchor.click();
+        cy.location("pathname").should("eq", href);
+      });
     });
   });
 });

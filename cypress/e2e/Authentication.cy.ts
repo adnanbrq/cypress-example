@@ -1,4 +1,5 @@
-it("should be able to sign in", (done) => {
-  cy.login();
-  done();
+describe("Authentication", () => {
+  it("should be able to sign in", () => {
+    cy.login();
+  });
 });
